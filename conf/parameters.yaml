@@ -1,29 +1,19 @@
-L_FREQ: 0.5
-H_FREQ: 100
-CHANNELS_TO_DROP:
-  - EMG
-  - EKG
-  - VEO
-  - HEO
-  - HEOL
-  - HEOR
-  - M1
-  - M2
-MONTAGE: standard_1005
-MATCH_CASE: false
-ON_MISSING: warn
-MATCH_ALIAS: true
-RESAMPLE_FREQ: 100
-T_MIN: 1.1
-T_MAX: 11.1
-BASELINE: null
-RANDOM_STATE: 42
-EVENT_ID:
-  4.8_LEFT: 65286
-  3.75_LEFT: 65284
-  4.8_RIGHT: 65289
-  3.75_RIGHT: 65287
-BANDS:
+preprocessing:
+  l_freq: 0.5
+  h_freq: 100
+  channels_to_drop:
+    - EMG
+    - EKG
+    - VEO
+    - HEO
+    - HEOL
+    - HEOR
+    - M1
+    - M2
+  resample_freq: 100
+  random_state: 42
+
+bands:
   theta:
     - 4
     - 8

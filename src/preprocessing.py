@@ -3,8 +3,7 @@ import mne
 import os
 import random
 import numpy as np
-from typing import List
-from joblib import Parallel, delayed
+from typing import List, Tuple
 
 
 def get_all_sample_filenames(
@@ -60,7 +59,8 @@ def get_epochs(
     match_case: bool = False,
     on_missing: str = 'warn',
     match_alias: bool = True,
-    resample_freq = 100,
+    baseline: Tuple[float, float] = None,
+    resample_freq: int = 100,
     event_id: dict = {'4.8_LEFT': 65286, '3.75_LEFT': 65284, '4.8_RIGHT': 65289, '3.75_RIGHT': 65287}
 ):
     # Just realised, are these inplace functions? not ideal
@@ -74,37 +74,37 @@ def get_epochs(
     epochs = mne.Epochs(
             data,
             events,
-            event_id = event_id,
+            event_id=event_id,
             tmin = 1.1,
             tmax = 11.1,
-            baseline=None,
+            baseline=baseline,
             preload=True)
     epochs = epochs.resample(sfreq = resample_freq)
     return epochs
 
 
 def ingest_sample(
-    sample_filename: str
+    sample_filename: str,
+    preprocessing_params: dict
 ):
+    print(sample_filename)
     data = read_data(sample_filename)
-    data = filter_data(data)
-    epochs = get_epochs(data)
+    filter_params = {k: v for k, v in preprocessing_params.items() if k in ['l_freq', 'h_freq', 'channels_to_drop']}
+    data = filter_data(data, **filter_params)
+    epoch_params = {k: v for k, v in preprocessing_params.items() if k in ['resample_freq', 'baseline']}
+    epochs = get_epochs(data, **epoch_params)
     return epochs
 
 
 def ingest_samples(
-    sample_filenames: List[str]
+    sample_filenames: List[str],
+    preprocessing_params: dict
 ):
     epochs_out = [None] * len(sample_filenames)
     for count, filename in enumerate(sample_filenames):
-        epochs_out[count] = ingest_sample(filename)
+        epochs_out[count] = ingest_sample(filename, preprocessing_params)
+    epochs_out = mne.concatenate_epochs(epochs_out)
     return epochs_out
-
-
-def ingest_samples_parallel(
-    sample_filenames: List[str]
-):
-    return Parallel(n_jobs=8)(delayed(ingest_sample)(filename) for filename in sample_filenames)
 
 
 def equalize_epoch_counts(
