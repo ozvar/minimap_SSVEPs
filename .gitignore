@@ -5,7 +5,7 @@
 /old_code/**
 
 # Don't upload WIP figures just yet
-/figures/**
+results/figures/**
 
 # Python cache & checkpoints
 __pycache__/
