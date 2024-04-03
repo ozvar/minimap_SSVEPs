@@ -1,0 +1,16 @@
+Cross-validating LogisticRegression
+Cross-validation results for LogisticRegression:
+Fold fold_1: {'test_accuracy': 0.8607242339832869, 'test_precision': 0.8865671641791045, 'test_recall': 0.8272980501392758, 'test_f1': 0.8559077809798271}
+Fold fold_2: {'test_accuracy': 0.8788300835654597, 'test_precision': 0.9047619047619048, 'test_recall': 0.8467966573816156, 'test_f1': 0.8748201438848922}
+Fold fold_3: {'test_accuracy': 0.8774373259052924, 'test_precision': 0.8882521489971347, 'test_recall': 0.8635097493036211, 'test_f1': 0.8757062146892656}
+Fold fold_4: {'test_accuracy': 0.8786610878661087, 'test_precision': 0.8795518207282913, 'test_recall': 0.8770949720670391, 'test_f1': 0.8783216783216783}
+Fold fold_5: {'test_accuracy': 0.8661087866108786, 'test_precision': 0.8972809667673716, 'test_recall': 0.8272980501392758, 'test_f1': 0.8608695652173912}
+Aggregated scores: {'accuracy': 0.8723523035862053, 'precision': 0.8912828010867614, 'recall': 0.8483994958061654, 'f1': 0.8691250766186108}
+Cross-validating LogisticRegression
+Cross-validation results for LogisticRegression:
+Fold fold_1: {'test_accuracy': 0.8607242339832869, 'test_precision': 0.8865671641791045, 'test_recall': 0.8272980501392758, 'test_f1': 0.8559077809798271}
+Fold fold_2: {'test_accuracy': 0.8788300835654597, 'test_precision': 0.9047619047619048, 'test_recall': 0.8467966573816156, 'test_f1': 0.8748201438848922}
+Fold fold_3: {'test_accuracy': 0.8774373259052924, 'test_precision': 0.8882521489971347, 'test_recall': 0.8635097493036211, 'test_f1': 0.8757062146892656}
+Fold fold_4: {'test_accuracy': 0.8786610878661087, 'test_precision': 0.8795518207282913, 'test_recall': 0.8770949720670391, 'test_f1': 0.8783216783216783}
+Fold fold_5: {'test_accuracy': 0.8661087866108786, 'test_precision': 0.8972809667673716, 'test_recall': 0.8272980501392758, 'test_f1': 0.8608695652173912}
+Aggregated scores: {'accuracy': 0.8723523035862053, 'precision': 0.8912828010867614, 'recall': 0.8483994958061654, 'f1': 0.8691250766186108}

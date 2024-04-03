@@ -3,6 +3,7 @@ from typing import Dict, Tuple
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import  cross_validate, StratifiedKFold
 from sklearn.preprocessing import StandardScaler
+from .utils import logging, setup_logger
 
 
 def create_labels_for_left_right_participants(n_left, n_right):
@@ -128,6 +129,9 @@ def main_analysis(
     - random_state: Random seed for reproducibility.
     - model_params: Additional parameters to be passed to the model.
     """
+    # Initialize logger
+    logger = setup_logger("results", model_class.__name__)
+    # Prepare data for classification
     labels = create_labels_for_left_right_participants(len(left_epochs.events), len(right_epochs.events))
     if permutation_test:
         labels = shuffle_labels_randomly(labels, random_state)
@@ -136,6 +140,15 @@ def main_analysis(
     X = np.vstack([X_left, X_right])
     y = labels
     # Perform cross-validation on the training set
+    logger.info(f"Cross-validating {model_class.__name__}")
     cv_results = perform_cross_validation(X, y, model_class, k_folds, random_state, **model_params)
     cv_metrics = parse_cv_results(cv_results, k_folds)
+    # Log results
+    logger.info(f"Cross-validation results for {model_class.__name__}:")
+    for fold, scores in cv_metrics['fold_scores'].items():
+        logger.info(f"Fold {fold}: {scores}")
+    logger.info(f"Aggregated scores: {cv_metrics['aggregated_metrics']}")
+    for handler in logger.handlers:
+        handler.close()
+        logger.removeHandler(handler)
     return cv_metrics

@@ -1,0 +1,16 @@
+Cross-validating RandomForestClassifier
+Cross-validation results for RandomForestClassifier:
+Fold fold_1: {'test_accuracy': 0.9902506963788301, 'test_precision': 0.9888888888888889, 'test_recall': 0.9916434540389972, 'test_f1': 0.9902642559109874}
+Fold fold_2: {'test_accuracy': 0.9805013927576601, 'test_precision': 0.9805013927576601, 'test_recall': 0.9805013927576601, 'test_f1': 0.9805013927576601}
+Fold fold_3: {'test_accuracy': 0.9874651810584958, 'test_precision': 0.9943502824858758, 'test_recall': 0.9805013927576601, 'test_f1': 0.9873772791023843}
+Fold fold_4: {'test_accuracy': 0.9721059972105998, 'test_precision': 0.9720670391061452, 'test_recall': 0.9720670391061452, 'test_f1': 0.9720670391061452}
+Fold fold_5: {'test_accuracy': 0.9790794979079498, 'test_precision': 0.9699453551912568, 'test_recall': 0.9888579387186629, 'test_f1': 0.9793103448275863}
+Aggregated scores: {'accuracy': 0.981880553062707, 'precision': 0.9811505916859653, 'recall': 0.9827142434758251, 'f1': 0.9819040623409526}
+Cross-validating RandomForestClassifier
+Cross-validation results for RandomForestClassifier:
+Fold fold_1: {'test_accuracy': 0.9832869080779945, 'test_precision': 0.9753424657534246, 'test_recall': 0.9916434540389972, 'test_f1': 0.9834254143646408}
+Fold fold_2: {'test_accuracy': 0.9805013927576601, 'test_precision': 0.9805013927576601, 'test_recall': 0.9805013927576601, 'test_f1': 0.9805013927576601}
+Fold fold_3: {'test_accuracy': 0.9860724233983287, 'test_precision': 0.9915492957746479, 'test_recall': 0.9805013927576601, 'test_f1': 0.9859943977591037}
+Fold fold_4: {'test_accuracy': 0.9721059972105998, 'test_precision': 0.9617486338797814, 'test_recall': 0.9832402234636871, 'test_f1': 0.9723756906077347}
+Fold fold_5: {'test_accuracy': 0.9832635983263598, 'test_precision': 0.977961432506887, 'test_recall': 0.9888579387186629, 'test_f1': 0.9833795013850415}
+Aggregated scores: {'accuracy': 0.9810460639541885, 'precision': 0.9774206441344802, 'recall': 0.9849488803473335, 'f1': 0.981135279374836}
