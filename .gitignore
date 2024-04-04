@@ -4,6 +4,9 @@
 # Redundant code
 /old_code/**
 
+# Tests not ready yet and could be distracting
+/tests/**
+
 # Don't upload WIP figures just yet
 results/figures/**
 
