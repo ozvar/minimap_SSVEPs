@@ -55,6 +55,8 @@ def filter_data(
 
 def get_epochs(
     data,
+    tmin: float,
+    tmax: float,
     montage: str = 'standard_1005',
     match_case: bool = False,
     on_missing: str = 'warn',
@@ -75,8 +77,8 @@ def get_epochs(
             data,
             events,
             event_id=event_id,
-            tmin = 1.1,
-            tmax = 11.1,
+            tmin=tmin,
+            tmax=tmax,
             baseline=baseline,
             preload=True)
     epochs = epochs.resample(sfreq = resample_freq)
@@ -91,7 +93,7 @@ def ingest_sample(
     data = read_data(sample_filename)
     filter_params = {k: v for k, v in preprocessing_params.items() if k in ['l_freq', 'h_freq', 'channels_to_drop']}
     data = filter_data(data, **filter_params)
-    epoch_params = {k: v for k, v in preprocessing_params.items() if k in ['resample_freq', 'baseline']}
+    epoch_params = {k: v for k, v in preprocessing_params.items() if k in ['resample_freq', 'baseline', 'tmin', 'tmax']}
     epochs = get_epochs(data, **epoch_params)
     return epochs
 
