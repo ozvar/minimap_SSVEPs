@@ -1,6 +1,8 @@
 preprocessing:
   l_freq: 0.5
   h_freq: 100
+  tmin: 1.1
+  tmax: 11.1
   channels_to_drop:
     - EMG
     - EKG
@@ -12,6 +14,25 @@ preprocessing:
     - M2
   resample_freq: 100
   random_state: 42
+
+analysis:
+  fmin: 1
+  fmax: 50 
+  noise_n_neighbor_freqs: 5
+  noise_skip_neighbor_freqs: 1
+  vROIs:
+    - PO7
+    - PO5
+    - PO3
+    - CB1
+    - O1
+    - POZ
+    - OZ
+    - PO4
+    - PO6
+    - PO8
+    - CB2
+    - O2
 
 bands:
   theta:
@@ -26,4 +47,3 @@ bands:
   beta:
     - 16.5
     - 25
-
