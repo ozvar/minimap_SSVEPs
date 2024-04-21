@@ -53,6 +53,14 @@ def filter_data(
     return data
 
 
+def set_reference(
+    data,
+    reference: str = 'average'
+):
+    data.set_eeg_reference(reference)
+    return data
+        
+
 def get_epochs(
     data,
     tmin: float,
@@ -94,6 +102,8 @@ def ingest_sample(
     filter_params = {k: v for k, v in preprocessing_params.items() if k in ['l_freq', 'h_freq', 'channels_to_drop']}
     data = filter_data(data, **filter_params)
     epoch_params = {k: v for k, v in preprocessing_params.items() if k in ['resample_freq', 'baseline', 'tmin', 'tmax']}
+    if preprocessing_params['reference'] is not None:
+        data = set_reference(data, reference = preprocessing_params['reference'] )
     epochs = get_epochs(data, **epoch_params)
     return epochs
 
