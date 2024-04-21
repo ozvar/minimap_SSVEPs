@@ -4,14 +4,11 @@ preprocessing:
   tmin: 1.1
   tmax: 11.1
   channels_to_drop:
-    - EMG
-    - EKG
     - VEO
     - HEO
-    - HEOL
-    - HEOR
     - M1
     - M2
+  reference_channels: CZ 
   resample_freq: 100
   random_state: 42
 
