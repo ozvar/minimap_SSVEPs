@@ -22,8 +22,8 @@ def sns_styleset():
                            '#937860',
                            '#ccb974',
                            '#4c72b0',
-                           '#dd8452'],
-                  font='Arial')
+                           '#dd8452']
+                  )
     mpl.rcParams['figure.dpi']        = 300
     mpl.rcParams['axes.linewidth']    = 1
     mpl.rcParams['grid.color']        = '.8'
@@ -48,13 +48,13 @@ def sns_styleset():
 
 
 def plot_PSD_and_SNR(
-        psds: np.ndarray,
-        snrs: np.ndarray,
-        freqs: np.ndarray,
-        fmin: float,
-        fmax: float,
-        fig_dir: str,
-        fig_suffix: str
+    psds: np.ndarray,
+    snrs: np.ndarray,
+    freqs: np.ndarray,
+    fmin: float,
+    fmax: float,
+    fig_dir: str,
+    fig_suffix: str
 ):
     # Setup figure and axes
     fig, axes = plt.subplots(2,
@@ -106,4 +106,66 @@ def plot_PSD_and_SNR(
             )
     plt.savefig(f'{fig_path}.png', bbox_inches='tight')
     plt.savefig(f'{fig_path}.svg', bbox_inches='tight')
+    plt.close()
+
+
+def plot_fft_magnitudes(
+    fft_mags_mean: np.ndarray,
+    fft_mags_std: np.ndarray,
+    freqs: np.ndarray,
+    group: str,
+    condition: str,
+    ROIs: str,
+    fig_dir: str,
+    color: tuple
+):
+    """Plot magnitudes of the FFT of epochs against frequencies of interest."""
+    plt.plot(
+        freqs,
+        fft_mags_mean,
+        color = color
+    )
+    plt.fill_between(
+        freqs,
+        fft_mags_mean - fft_mags_std,
+        fft_mags_mean + fft_mags_std,
+        alpha = 0.3,
+        color = color 
+    )
+    plt.ylim(bottom = 0)
+    plt.xlim(left = 1)
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('FFT magnitude')
+    # Name and save the plot
+    fig_name = f'mean_FFT_magnitudes_{group}_{condition}_{ROIs}.png'
+    fig_dir = os.path.join(fig_dir, 'FFT_magnitudes')
+    os.makedirs(fig_dir, exist_ok = True)
+    plt.savefig(os.path.join(fig_dir, fig_name))
+    plt.close()
+
+
+def plot_snr(
+    snr_mean: np.ndarray,
+    freqs: np.ndarray,
+    group: str,
+    condition: str,
+    ROIs: str,
+    fig_dir: str,
+    color: tuple
+):
+    """Plot SNR of the FFT of epochs against frequencies of interest."""
+    plt.plot(
+        freqs,
+        snr_mean,
+        color = color
+    )
+    plt.ylim(bottom = 1)
+    plt.xlim(left = 1)
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('SNR')
+    # Name and save the plot
+    fig_name = f'mean_SNR_{group}_{condition}_{ROIs}.png'
+    fig_dir = os.path.join(fig_dir, 'SNR')
+    os.makedirs(fig_dir, exist_ok = True)
+    plt.savefig(os.path.join(fig_dir, fig_name), bbox_inches = 'tight')
     plt.close()
