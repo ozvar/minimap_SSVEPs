@@ -102,8 +102,8 @@ def ingest_sample(
     filter_params = {k: v for k, v in preprocessing_params.items() if k in ['l_freq', 'h_freq', 'channels_to_drop']}
     data = filter_data(data, **filter_params)
     epoch_params = {k: v for k, v in preprocessing_params.items() if k in ['resample_freq', 'baseline', 'tmin', 'tmax']}
-    if preprocessing_params['reference'] is not None:
-        data = set_reference(data, reference = preprocessing_params['reference'] )
+    if preprocessing_params['reference_channels'] is not None:
+        data = set_reference(data, reference = preprocessing_params['reference_channels'] )
     epochs = get_epochs(data, **epoch_params)
     return epochs
 
