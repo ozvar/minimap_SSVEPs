@@ -1,22 +1,27 @@
 preprocessing:
-  l_freq: 0.5
+  baseline: null 
+  l_freq: 1
   h_freq: 100
-  tmin: 1.1
+  tmin: 4.433333333333334
   tmax: 11.1
   channels_to_drop:
     - VEO
     - HEO
     - M1
     - M2
-  reference_channels: CZ 
+    - EKG
+    - EMG
+    - HEOL
+    - HEOR
+  reference_channels: 'average'
   resample_freq: 100
   random_state: 42
 
 analysis:
   fmin: 1
-  fmax: 50 
-  noise_n_neighbor_freqs: 5
-  noise_skip_neighbor_freqs: 1
+  fmax: 25 
+  noise_n_neighbor_bins: 1
+  noise_skip_neighbor_bins: 0
   vROIs:
     - PO7
     - PO5
