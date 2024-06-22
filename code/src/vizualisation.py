@@ -4,6 +4,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+from pathlib import Path
 
 
 # configure pandas table display
@@ -53,7 +54,7 @@ def plot_PSD_and_SNR(
     freqs: np.ndarray,
     fmin: float,
     fmax: float,
-    fig_dir: str,
+    fig_dir: Path,
     fig_suffix: str
 ):
     # Setup figure and axes
@@ -100,10 +101,7 @@ def plot_PSD_and_SNR(
     fig.align_labels()
     #plt.suptitle(f"PSD and SNR for {fig_suffix}")
     # Save figures in raster and vector formats
-    fig_path = os.path.join(
-            fig_dir,
-            f"PSD_and_SNR_{fig_suffix}"
-            )
+    fig_path = fig_dir / f"PSD_and_SNR_{fig_suffix}"
     plt.savefig(f'{fig_path}.png', bbox_inches='tight')
     plt.savefig(f'{fig_path}.svg', bbox_inches='tight')
     plt.close()
@@ -116,7 +114,7 @@ def plot_fft_magnitudes(
     group: str,
     condition: str,
     ROIs: str,
-    fig_dir: str,
+    fig_dir: Path,
     color: tuple
 ):
     """Plot magnitudes of the FFT of epochs against frequencies of interest."""
@@ -138,9 +136,9 @@ def plot_fft_magnitudes(
     plt.ylabel('FFT magnitude')
     # Name and save the plot
     fig_name = f'mean_FFT_magnitudes_{group}_{condition}_{ROIs}.png'
-    fig_dir = os.path.join(fig_dir, 'FFT_magnitudes')
+    fig_dir = fig_dir / 'FFT_magnitudes'
     os.makedirs(fig_dir, exist_ok = True)
-    plt.savefig(os.path.join(fig_dir, fig_name))
+    plt.savefig(fig_dir / fig_name)
     plt.close()
 
 
@@ -150,7 +148,7 @@ def plot_snr(
     group: str,
     condition: str,
     ROIs: str,
-    fig_dir: str,
+    fig_dir: Path,
     color: tuple
 ):
     """Plot SNR of the FFT of epochs against frequencies of interest."""
@@ -166,7 +164,7 @@ def plot_snr(
     plt.title(f'{group.replace("_", " ").title()} {condition.title()} {ROIs.replace("_", " ").title()}')
     # Name and save the plot
     fig_name = f'mean_SNR_{group}_{condition}_{ROIs}.png'
-    fig_dir = os.path.join(fig_dir, 'SNR')
+    fig_dir = fig_dir / 'SNR'
     os.makedirs(fig_dir, exist_ok = True)
-    plt.savefig(os.path.join(fig_dir, fig_name), bbox_inches = 'tight')
+    plt.savefig(fig_dir / fig_name, bbox_inches = 'tight')
     plt.close()

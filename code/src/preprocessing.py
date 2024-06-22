@@ -1,19 +1,19 @@
 import glob
 import mne
-import os
 import random
 import numpy as np
+from pathlib import Path
 from typing import List, Tuple
 
 
 def get_all_sample_filenames(
-    samples_dir: str,
+    samples_dir: Path,
     extension: str = 'edf'
 ):
     # Ensure directory exists
-    if not os.path.isdir(samples_dir):
+    if not samples_dir.is_dir():
         raise Exception('Directory not found')
-    all_filenames = [i for i in glob.glob(os.path.join(samples_dir, f'*.{extension}'))]
+    all_filenames = list(samples_dir.glob(f'*.{extension}'))
     # Ensure there are files in the directory
     if not all_filenames:
         raise Exception('No files with matching extension found in directory')
@@ -21,7 +21,7 @@ def get_all_sample_filenames(
 
 
 def read_data(
-    file_path: str,
+    file_path: Path,
     preload : bool = True
 ):
     """

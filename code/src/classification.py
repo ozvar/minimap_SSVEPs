@@ -1,5 +1,6 @@
 import numpy as np
 from typing import Dict, Tuple
+from pathlib import Path
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import  cross_validate, StratifiedKFold
 from sklearn.preprocessing import StandardScaler
@@ -114,6 +115,7 @@ def main_analysis(
     left_epochs,
     right_epochs,
     model_class,
+    results_dir: Path,
     k_folds: int = 5,
     random_state: int = 42,
     permutation_test: bool = False,
@@ -130,7 +132,7 @@ def main_analysis(
     - model_params: Additional parameters to be passed to the model.
     """
     # Initialize logger
-    logger = setup_logger("results", model_class.__name__)
+    logger = setup_logger(results_dir, model_class.__name__)
     # Prepare data for classification
     labels = create_labels_for_left_right_participants(len(left_epochs.events), len(right_epochs.events))
     if permutation_test:
@@ -151,4 +153,3 @@ def main_analysis(
     for handler in logger.handlers:
         handler.close()
         logger.removeHandler(handler)
-    return cv_metrics
