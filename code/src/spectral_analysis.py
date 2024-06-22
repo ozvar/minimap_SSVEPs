@@ -52,8 +52,8 @@ def compute_fft_mag(
 
 def snr_spectrum(
     fft,
-    noise_n_neighbor_freqs: int,
-    noise_skip_neighbor_freqs: int
+    noise_n_neighbor_bins: int,
+    noise_skip_neighbor_bins: int
 ):
     """Compute SNR spectrum from frequency spectrum using convolution.
 
@@ -62,10 +62,10 @@ def snr_spectrum(
     fft : ndarray, shape ([n_trials, n_channels,] n_frequency_bins)
         Data object containing magnitude values obtained after FFT. Also works
         with arrays as produced by MNE's PSD functions or channel/trial subsets.
-    noise_n_neighbor_freqs : int
+    noise_n_neighbor_bins : int
         Number of neighboring frequencies used to compute noise level.
         increment by one to add one frequency bin ON BOTH SIDES
-    noise_skip_neighbor_freqs : int
+    noise_skip_neighbor_bins : int
         set this >=1 if you want to exclude the immediately neighboring
         frequency bins in noise level calculation
 
@@ -80,9 +80,9 @@ def snr_spectrum(
     # frequencies
     averaging_kernel = np.concatenate(
         (
-            np.ones(noise_n_neighbor_freqs),
-            np.zeros(2 * noise_skip_neighbor_freqs + 1),
-            np.ones(noise_n_neighbor_freqs),
+            np.ones(noise_n_neighbor_bins),
+            np.zeros(2 * noise_skip_neighbor_bins + 1),
+            np.ones(noise_n_neighbor_bins),
         )
     )
     averaging_kernel /= averaging_kernel.sum()
@@ -94,7 +94,7 @@ def snr_spectrum(
     # The mean is not defined on the edges so we will pad it with nans. The
     # padding needs to be done for the last dimension only so we set it to
     # (0, 0) for the other ones.
-    edge_width = noise_n_neighbor_freqs + noise_skip_neighbor_freqs
+    edge_width = noise_n_neighbor_bins + noise_skip_neighbor_bins
     pad_width = [(0, 0)] * (mean_noise.ndim - 1) + [(edge_width, edge_width)]
     mean_noise = np.pad(mean_noise, pad_width=pad_width, constant_values=np.nan)
     snr = fft / mean_noise
@@ -173,8 +173,8 @@ def compute_condition_psds_and_snrs(
             )
             snrs[snr_key] = snr_spectrum(
                 psds[psd_key],
-                parameters['analysis']['noise_n_neighbor_freqs'],
-                parameters['analysis']['noise_skip_neighbor_freqs']
+                parameters['analysis']['noise_n_neighbor_bins'],
+                parameters['analysis']['noise_skip_neighbor_bins']
             )
 
     return psds, snrs, freqs
