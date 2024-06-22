@@ -11,7 +11,7 @@ from sklearn.svm import SVC
 parameters_path = os.path.join("conf", "parameters.yaml")
 with open(parameters_path, 'r') as file:
     parameters = yaml.safe_load(file)
-viz.sns_styleset()
+vizualisation.sns_styleset()
 
 
 left_data_folder = preprocessing.get_all_sample_filenames(
@@ -56,20 +56,20 @@ else:
 """
 ## Here we classify left- versus right- conditioned participants based on their EEG data
 # Cross-validate classifier and return metrics
-log_res_metrics = decoding.main_analysis(
+log_res_metrics = classification.main_analysis(
                     left_minimap_epochs,
                     right_minimap_epochs,
                     LogisticRegression,
                     random_state=parameters["RANDOM_STATE"],
                     max_iter=200
 )
-rf_metrics = decoding.main_analysis(
+rf_metrics = classification.main_analysis(
                     left_minimap_epochs,
                     right_minimap_epochs,
                     RandomForestClassifier,
                     random_state=parameters["RANDOM_STATE"]
 )
-svm_metrics = decoding.main_analysis(
+svm_metrics = classification.main_analysis(
                     left_minimap_epochs,
                     right_minimap_epochs,
                     SVC,
@@ -91,7 +91,7 @@ right_psds, right_snrs, freqs = spectral_analysis.compute_condition_psds_and_snr
 # Now we plot the mean PSDs and SNRs (for all channels)
 # For left minimap condition
 for psds_key, snrs_key in zip(left_psds, left_snrs):
-    viz.plot_PSD_and_SNR(
+    vizualisation.plot_PSD_and_SNR(
             psds = left_psds[psds_key],
             snrs = left_snrs[snrs_key],
             freqs = freqs,
@@ -102,7 +102,7 @@ for psds_key, snrs_key in zip(left_psds, left_snrs):
             )
 # For right minimap condition
 for psds_key, snrs_key in zip(right_psds, right_snrs):
-    viz.plot_PSD_and_SNR(
+    vizualisation.plot_PSD_and_SNR(
             psds = right_psds[psds_key],
             snrs = right_snrs[snrs_key],
             freqs = freqs,
