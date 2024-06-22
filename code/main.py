@@ -1,5 +1,6 @@
 import yaml
 import pickle
+from pathlib import Path
 from src import preprocessing, classification, vizualisation, utils, spectral_analysis
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
