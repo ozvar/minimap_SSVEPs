@@ -18,7 +18,6 @@ def load_data(data_dir:Path):
     pass
 
 
-
 def setup_logger(
         results_dir: Path,
         model_type: str,
