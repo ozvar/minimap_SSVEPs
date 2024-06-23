@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 from pathlib import Path
+from typing import List
 
 
 # configure pandas table display
@@ -46,6 +47,38 @@ def sns_styleset():
     mpl.rcParams['legend.frameon']    = False
     mpl.rcParams['xtick.labelsize']   = 13
     mpl.rcParams['ytick.labelsize']   = 13
+
+
+def plot_time_course(
+    epochs,
+    ROIs: List[str],
+    group_labels: dict,
+    fig_name: str,
+    fig_dir: Path
+):
+    if ROIs:
+        epochs = epochs.pick(ROIs)
+    evoked = epochs.average()
+    fig, ax = plt.subplots(figsize=(10, 6))
+    evoked.plot(
+        axes=ax,
+        time_unit='s',
+        titles=None,
+        show=False,
+        gfp=False,
+        window_title=None,
+        ylim=dict(eeg=[-5, 5]),  # Set the y-axis limits for EEG channels
+        spatial_colors=False
+    )
+    ax.set_xlabel('Time (s)')
+    ax.set_ylabel('Amplitude (μV)')
+    ax.set_title('Average Time Course')
+    # Display the plot
+    plt.tight_layout()
+    os.makedirs(fig_dir, exist_ok=True)
+    plt.savefig(fig_dir / f'{fig_name}.png')
+    plt.savefig(fig_dir / f'{fig_name}.svg')
+    plt.close()
 
 
 def plot_PSD_and_SNR(
