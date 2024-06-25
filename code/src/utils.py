@@ -10,7 +10,7 @@ def load_epochs(epochs_path: Path):
             [left_minimap_epochs, right_minimap_epochs] = pickle.load(f)
         return left_minimap_epochs, right_minimap_epochs 
     except FileNotFoundError:
-        print(f"Epochs file not found at {epochs_dir}")
+        print(f"Epochs file not found at {epochs_path}")
         return None
 
 
@@ -19,12 +19,11 @@ def load_data(data_dir:Path):
 
 
 def setup_logger(
-        results_dir: Path,
+        logs_dir: Path,
         model_type: str,
         ) -> logging.Logger:
-    log_dir = results_dir / "logs"
-    os.makedirs(log_dir, exist_ok=True)
-    log_filename = log_dir / f"{model_type}_classification_metrics.txt"
+    os.makedirs(logs_dir, exist_ok=True)
+    log_filename = logs_dir / f"{model_type}_classification_metrics.txt"
     # Create logger and set the level to INFO
     logger = logging.getLogger("ClassificationLogger")
     logger.setLevel(logging.INFO)
