@@ -7,11 +7,11 @@ from sklearn.preprocessing import StandardScaler
 from .utils import logging, setup_logger
 
 
-def create_labels_for_left_right_participants(n_left, n_right):
-    """Generate labels for left- (0) and right- (1) conditioned participants."""
-    labels_left = np.zeros(n_left)
-    labels_right = np.ones(n_right)
-    return np.concatenate([labels_left, labels_right])
+def create_labels_for_binary_classification(n_first, n_second):
+    """Generate labels for first (0) and second (1) group of participants."""
+    labels_first = np.zeros(n_first)
+    labels_second = np.ones(n_second)
+    return np.concatenate([labels_first, labels_second])
 
 
 def shuffle_labels_randomly(labels, random_state: int = 42):
@@ -112,8 +112,8 @@ def parse_cv_results(
 
 
 def main_analysis(
-    left_epochs,
-    right_epochs,
+    first_epochs,
+    second_epochs,
     model_class,
     results_dir: Path,
     k_folds: int = 5,
@@ -121,11 +121,11 @@ def main_analysis(
     permutation_test: bool = False,
     **model_params):
     """
-    Main function to perform classification of epochs from left and right conditions using specified model.
+    Main function to perform binary classification of epochs from first and second condition using specified model.
     
     Parameters:
-    - left_epochs: Epochs object for the left condition.
-    - right_epochs: Epochs object for the right condition.
+    - first_epochs: Epochs object for the first condition.
+    - second_epochs: Epochs object for the second condition.
     - model_class: The classifier model class to be used for analysis.
     - test_size: Proportion of the data to be used as the test set.
     - random_state: Random seed for reproducibility.
@@ -134,12 +134,12 @@ def main_analysis(
     # Initialize logger
     logger = setup_logger(results_dir, model_class.__name__)
     # Prepare data for classification
-    labels = create_labels_for_left_right_participants(len(left_epochs.events), len(right_epochs.events))
+    labels = create_labels_for_binary_classification(len(first_epochs.events), len(second_epochs.events))
     if permutation_test:
         labels = shuffle_labels_randomly(labels, random_state)
-    X_left = compute_psd_and_features(left_epochs)
-    X_right = compute_psd_and_features(right_epochs)
-    X = np.vstack([X_left, X_right])
+    X_first = compute_psd_and_features(first_epochs)
+    X_second = compute_psd_and_features(second_epochs)
+    X = np.vstack([X_first, X_second])
     y = labels
     # Perform cross-validation on the training set
     logger.info(f"Cross-validating {model_class.__name__}")
