@@ -10,8 +10,8 @@ from sklearn.svm import SVC
 # Declare file locations
 root_dir = Path.home() / "Git" / "minimap_SSVEPs"
 data_dir = root_dir / "data"
-results_dir = root_dir / "results"
-fig_dir = root_dir / "results" / "figures"
+logs_dir= root_dir / "results" / "kokkinakis"
+fig_dir = root_dir / "results" / "kokkinakis" / "figures"
 params_dir = root_dir / "code" / "conf"
 
 # Load params
@@ -31,9 +31,10 @@ right_data_folder = preprocessing.get_all_sample_filenames(
 )
 
 # Load data if already preprocessed
-left_minimap_epochs, right_minimap_epochs = utils.load_epochs(data_dir / "kokkinakis" / "epochs.pickle") 
+try:
+    left_minimap_epochs, right_minimap_epochs = utils.load_epochs(data_dir / "kokkinakis" / "epochs.pickle") 
 # Otherwise preprocess it
-if left_minimap_epochs is None:
+except TypeError:
     left_minimap_epochs = preprocessing.ingest_samples(
             left_data_folder,
             parameters["preprocessing"]
@@ -71,65 +72,31 @@ for group in [left_minimap_epochs, right_minimap_epochs]:
             fig_dir = fig_dir / "time_courses"
         )
 
-
 ## Here we classify left- versus right- conditioned participants based on their EEG data
 # Cross-validate classifier and return metrics
 log_res_metrics = classification.main_analysis(
                     left_minimap_epochs,
                     right_minimap_epochs,
                     LogisticRegression,
-                    results_dir,
+                    logs_dir,
                     random_state=parameters["preprocessing"]["random_state"],
+                    permutation_test = False,
                     max_iter=200
 )
 rf_metrics = classification.main_analysis(
                     left_minimap_epochs,
                     right_minimap_epochs,
                     RandomForestClassifier,
-                    results_dir,
+                    logs_dir,
                     random_state=parameters["preprocessing"]["random_state"],
+                    permutation_test = False
 )
 svm_metrics = classification.main_analysis(
                     left_minimap_epochs,
                     right_minimap_epochs,
                     SVC,
-                    results_dir,
+                    logs_dir,
                     random_state=parameters["preprocessing"]["random_state"],
+                    permutation_test = False,
                     kernel="linear"
 )
-
-
-## Here we do spectral analysis on the SSVEP responses
-# First compute PSDs and SNRs for each unique combination of parameters
-# i.e. each combination of frequency and stimulus side for each condition
-
-# For left minimap condition
-left_psds, left_snrs, freqs = spectral_analysis.compute_condition_psds_and_snrs(
-    left_minimap_epochs, "left_minimap", parameters)
-# For right minimap condition
-right_psds, right_snrs, freqs = spectral_analysis.compute_condition_psds_and_snrs(
-    right_minimap_epochs, "right_minimap", parameters)
-
-# Now we plot the mean PSDs and SNRs (for all channels)
-# For left minimap condition
-for psds_key, snrs_key in zip(left_psds, left_snrs):
-    vizualisation.plot_PSD_and_SNR(
-            psds = left_psds[psds_key],
-            snrs = left_snrs[snrs_key],
-            freqs = freqs,
-            fmin = parameters["analysis"]["fmin"],
-            fmax = 25,
-            fig_dir = fig_dir,
-            fig_suffix = f"{snrs_key}_all_channels"
-            )
-# For right minimap condition
-for psds_key, snrs_key in zip(right_psds, right_snrs):
-    vizualisation.plot_PSD_and_SNR(
-            psds = right_psds[psds_key],
-            snrs = right_snrs[snrs_key],
-            freqs = freqs,
-            fmin = parameters["analysis"]["fmin"],
-            fmax = 25,
-            fig_dir = fig_dir,
-            fig_suffix = f"{snrs_key}_all_channels" 
-            )
