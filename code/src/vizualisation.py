@@ -77,9 +77,13 @@ def plot_time_course(
     plt.tight_layout()
     os.makedirs(fig_dir, exist_ok=True)
     plt.savefig(fig_dir / f'{fig_name}.png')
-    plt.savefig(fig_dir / f'{fig_name}.svg')
+    # try-except clause due to my PC having issues with SVG
+    try:
+        plt.savefig(fig_dir / f'{fig_name}.svg')
+    except AttributeError:
+        print(f"Warning: Couldn't save as SVG. Saving as PNG instead for {fig_name}")
+        plt.savefig(fig_dir / f'{fig_name}.pdf')
     plt.close()
-
 
 def plot_PSD_and_SNR(
     psds: np.ndarray,
