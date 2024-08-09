@@ -105,6 +105,8 @@ group_labels = {
 #                     kernel="linear"
 # )
 
+
+# These constants have to be somewhat hardcoded due to the need for multiproc functions to be top-level
 MODEL_CLASS = RandomForestClassifier
 K_FOLDS = 5
 RANDOM_STATE = 42
@@ -112,6 +114,31 @@ RANDOM_STATE = 42
 def parallel_lofo(
     channel_name
 ):
+    """
+    parallel_lofo is a function designed to calculate leave-one-feature-out importance 
+    in a parallelised fashion.
+
+    The implementation here is very simple and will produce an output json 
+    that requires further parsing. 
+
+    Note that parallelising this function is very memory heavy, and failure to adequately
+    manage memory will result in numpy array memory errors, which are not currently handled.
+    
+    Usage:
+        Because of the way our current analysis pipeline is set up, this is written with 
+        a requirement for hardcoding the model parameters. Sorry. To this end, see the constants
+        I defined above. You will similarly need to supply constants for any extra args like LOGREG_NUM_ITER. 
+        Once that's done, simply use pqdm as written here (or process pools if you prefer) to compute each
+        feature importance in parallel. 
+
+
+    Args:
+        channel_name (list): this is a list of all the channel names (features) that we want to validate (calculate importance) for. 
+
+    Returns:
+        dict: This function technically returns a single dict of dicts, which contains the usual crossval metrics. 
+            In the usage below, observe that these dicts are stored in a list, resulting from the multiprocessing.
+    """
     first_epochs_copy = left_minimap_epochs.copy()
     second_epochs_copy = right_minimap_epochs.copy()
     
@@ -133,9 +160,11 @@ def parallel_lofo(
 
 if __name__ == "__main__":
 
+    # I think this is a necessary and worthwhile check before running LOFO, since we have two datasets to align.
     assert left_minimap_epochs.ch_names == right_minimap_epochs.ch_names
     channel_names = left_minimap_epochs.ch_names
 
+    # I have chosen to use pqdm to attach a progress bar to this, but using joblib, etc. would be fine too.
     results = pqdm(channel_names, parallel_lofo, n_jobs=6)
 
     with open(logs_dir/"rf_validation.json", "wb") as results_file:
