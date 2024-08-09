@@ -109,7 +109,7 @@ MODEL_CLASS = RandomForestClassifier
 K_FOLDS = 5
 RANDOM_STATE = 42
 
-def parallel_loo(
+def parallel_lofo(
     channel_name
 ):
     first_epochs_copy = left_minimap_epochs.copy()
@@ -136,7 +136,7 @@ if __name__ == "__main__":
     assert left_minimap_epochs.ch_names == right_minimap_epochs.ch_names
     channel_names = left_minimap_epochs.ch_names
 
-    results = pqdm(channel_names, parallel_loo, n_jobs=6)
+    results = pqdm(channel_names, parallel_lofo, n_jobs=6)
 
     with open(logs_dir/"rf_validation.json", "wb") as results_file:
         json.dump(results, results_file, indent=4)
