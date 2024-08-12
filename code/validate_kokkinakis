@@ -5,10 +5,11 @@ from src import preprocessing, classification, vizualisation, utils, spectral_an
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
-from pqdm.processes import pqdm
 import numpy as np
 from pqdm.processes import pqdm
-import json
+from typing import List, Dict
+import pandas as pd
+import pickle
 
 # Declare file locations
 # root_dir = Path.home() / "Git" / "minimap_SSVEPs"
@@ -107,6 +108,7 @@ group_labels = {
 
 
 # These constants have to be somewhat hardcoded due to the need for multiproc functions to be top-level
+## There's a better way to implement this, but let's see if it does what we want it to do first
 MODEL_CLASS = RandomForestClassifier
 K_FOLDS = 5
 RANDOM_STATE = 42
@@ -139,11 +141,13 @@ def parallel_lofo(
         dict: This function technically returns a single dict of dicts, which contains the usual crossval metrics. 
             In the usage below, observe that these dicts are stored in a list, resulting from the multiprocessing.
     """
+    # We have to copy the epochs arrays as drop_channels() is an inplace operation...
     first_epochs_copy = left_minimap_epochs.copy()
     second_epochs_copy = right_minimap_epochs.copy()
-    
-    first_epochs_copy.drop_channels(channel_name, "warn")
-    second_epochs_copy.drop_channels(channel_name, "warn")
+
+    if channel_name != None: 
+        first_epochs_copy.drop_channels(channel_name, "warn")
+        second_epochs_copy.drop_channels(channel_name, "warn")
 
     X_first = classification.compute_psd_and_features(first_epochs_copy) 
     X_second = classification.compute_psd_and_features(second_epochs_copy)
@@ -155,17 +159,56 @@ def parallel_lofo(
     # Perform cross-validation on the training set
     cv_results = classification.perform_cross_validation(X, y, MODEL_CLASS, K_FOLDS, RANDOM_STATE)
     cv_metrics = classification.parse_cv_results(cv_results, K_FOLDS)
-    out = {channel_name: cv_metrics}
-    return out
+    cv_metrics['dropped_channel'] = channel_name
+    return cv_metrics
+    
+def prepare_lofo_features(
+    first_epochs,
+    second_epochs,
+):
+    """prepare_lofo_features is a helper function which grabs the list of channel names for LOFO importance.
+    This also includes an assertion to check that the channel names in both groups match up!
+
+    Args:
+        first_epochs (mne.EpochsArray): The first (either left or right) epochs
+        second_epochs (mne.EpochsArray): The second (either left or right) epochs
+        channel_names (List[str]): The channel names, where each channel is a 'feature' we apply LOFO over
+
+    Returns:
+        List[str]: Channel names extracted directly from the epochs array 
+    """
+    # I think this is a necessary and worthwhile check before running LOFO, since we have two datasets to align.
+    assert first_epochs.ch_names == second_epochs.ch_names
+    channel_names = first_epochs.ch_names
+    channel_names = [None] + channel_names # We include a No feature, as a baseline
+    return channel_names
+    
+def results_to_df(
+    results: list
+) -> pd.DataFrame:
+    parsed = []
+    for result in results:
+        clean = {
+            'dropped_channel' : result['dropped_channel'],
+            'accuracy' : result['aggregated_metrics']['accuracy'],
+            'precision' : result['aggregated_metrics']['precision'],
+            'recall' : result['aggregated_metrics']['recall'],
+            'f1' : result['aggregated_metrics']['f1'],
+            'fold_scores' : result['fold_scores']
+        }
+        parsed.append(clean)
+    return pd.DataFrame(parsed)
 
 if __name__ == "__main__":
 
-    # I think this is a necessary and worthwhile check before running LOFO, since we have two datasets to align.
-    assert left_minimap_epochs.ch_names == right_minimap_epochs.ch_names
-    channel_names = left_minimap_epochs.ch_names
+    channel_names = prepare_lofo_features(left_minimap_epochs, right_minimap_epochs)
 
     # I have chosen to use pqdm to attach a progress bar to this, but using joblib, etc. would be fine too.
-    results = pqdm(channel_names, parallel_lofo, n_jobs=6)
+    results = pqdm(channel_names[:9], parallel_lofo, n_jobs=4)
+    results_df = results_to_df(results)
 
-    with open(logs_dir/"rf_validation.json", "wb") as results_file:
-        json.dump(results, results_file, indent=4)
+    with open(logs_dir/"rf_validation.pickle", "wb") as results_file:
+        pickle.dump(results, results_file)
+    results_df.to_csv(logs_dir/"rf_validation.csv")
+
+
